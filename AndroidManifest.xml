@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.basiclauncher"
+    android:versionCode="2"
+    android:versionName="1.1" >
+    <permission android:name="android.permission.FLASHLIGHT"
+                android:permissionGroup="android.permission-group.HARDWARE_CONTROLS"
+                android:protectionLevel="normal"/>
+    <permission
+            android:name="com.example.basiclauncher.permission.MAPS_RECEIVE"
+            android:protectionLevel="signature" />
+
+    <uses-permission android:name="com.example.basiclauncher.permission.MAPS_RECEIVE"
+                     android:protectionLevel="signature"/>
+    <uses-sdk android:minSdkVersion="18"/>
+    <uses-feature
+            android:glEsVersion="0x00020000"
+            android:required="true"/>
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="com.google.android.providers.gsf.permissions.READ_GSERVICES"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.READ_CALENDAR" />
+    <uses-permission android:name="android.permission.WRITE_CALENDAR" />
+
+    <uses-permission android:name="android.permission.FLASHLIGHT"/>
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera"/>
+    <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name= "android.permission.SEND_SMS"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.INTERACT_ACROSS_USERS" />
+    <uses-permission android:name="android.permission.BIND_REMOTEVIEWS permission"/>
+    <uses-permission android:name="android.permission.EXPAND_STATUS_BAR" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.FLASHLIGHT"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
+
+    <uses-permission android:name="android.permission.RESTART_PACKAGES"/>
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:theme="@android:style/Theme.Holo.Wallpaper.NoTitleBar"
+            android:name="com.example.basiclauncher.Main"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:clearTaskOnLaunch="true"
+            android:screenOrientation="portrait"
+            android:stateNotNeeded="true" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.HOME" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".map"/>
+        <service android:name=".Notification"
+                 android:label="notificatoin"
+                 android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService" />
+            </intent-filter>
+        </service>
+        <activity android:name=".dialog"
+                  android:theme="@android:style/Theme.Dialog"/>
+        <activity android:name=".MyActivity"/>
+        <meta-data
+                android:name="com.google.android.maps.v2.API_KEY"
+                android:value="AIzaSyBFnz1Hfey2zCQn_lV3f3uIal-oin_Mrro"></meta-data>
+        <!--android:value="AIzaSyDiDigvqFZTiwtQ5ljcpwODJ_Sy2RkMfnk"/>-->
+        <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
+    </application>
+
+</manifest>

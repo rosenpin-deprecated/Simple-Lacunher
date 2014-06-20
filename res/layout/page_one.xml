@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent">
+    <ScrollView
+            android:id="@+id/right_drawer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#80000000">
+        <RelativeLayout
+                android:layout_gravity="center_horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+            <RelativeLayout android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_horizontal"
+                            android:id="@+id/qsone">
+                <ImageView
+                        android:background="@drawable/ic_action_network_wifi"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:id="@+id/wifi"
+                        />
+                <ImageView
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_marginLeft="20dp"
+                        android:id="@+id/mobile_data"
+                        android:background="@drawable/ic_action_mobile_data"
+                        android:layout_alignParentTop="true" android:layout_toRightOf="@+id/wifi"/>
+                <ImageView
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_marginLeft="20dp"
+                        android:id="@+id/gps"
+                        android:background="@drawable/ic_qs_location_on"
+                        android:layout_alignParentTop="true" android:layout_toRightOf="@+id/mobile_data"/>
+                <ImageView
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_marginLeft="20dp"
+                        android:id="@+id/rotate"
+                        android:background="@drawable/ic_action_rotate_right"
+                        android:layout_toRightOf="@+id/gps"/>
+            </RelativeLayout>
+            <RelativeLayout android:layout_width="fill_parent" android:layout_height="wrap_content"
+                            android:gravity="center_horizontal"
+                            android:layout_below="@+id/qsone" android:id="@+id/relativeLayout">
+
+                <ImageView
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:id="@+id/bluetooth"
+                        android:src="@drawable/ic_action_bluetooth"
+                        />
+                <ImageView
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:id="@+id/flash"
+                        android:layout_marginLeft="20dp"
+                        android:src="@drawable/ic_action_flash_on"
+                        android:layout_toRightOf="@+id/power_save"/>
+
+                <ImageView
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:id="@+id/airplane"
+                        android:layout_marginLeft="20dp"
+                        android:src="@drawable/ic_action_airplane_mode_off"
+                        android:layout_toRightOf="@+id/bluetooth"/>
+                <ImageView
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:id="@+id/power_save"
+                        android:layout_marginLeft="20dp"
+                        android:src="@drawable/save_battery"
+                        android:layout_toRightOf="@+id/airplane"/>
+
+
+            </RelativeLayout>
+
+            <SeekBar
+                    android:layout_marginTop="200dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/brightness_slider"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true" android:layout_toRightOf="@+id/imageView" android:max="85"/>
+            <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/imageView"
+                    android:background="@drawable/ic_action_brightness_high"
+                    android:layout_alignTop="@+id/brightness_slider" android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"/>
+            <SeekBar
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/volume_slider" android:layout_alignParentTop="true"
+                    android:layout_marginTop="268dp" android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true" android:layout_toRightOf="@+id/imageView2"
+                    android:indeterminateOnly="false" android:max="7"/>
+            <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/imageView2"
+                    android:background="@drawable/ic_action_volume_on"
+                    android:layout_alignTop="@+id/volume_slider" android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"/>
+            <Spinner
+                    android:layout_width="match_parent"
+                    android:entries="@array/theme"
+                    android:layout_height="wrap_content"
+
+                    android:id="@+id/theme"
+                    android:prompt="@string/app_name" android:layout_below="@+id/volume_slider"
+                    android:layout_alignParentLeft="true" android:layout_alignParentStart="true"/>
+            <RelativeLayout android:layout_width="fill_parent" android:layout_height="60dp"
+                            android:id="@+id/recent_containers"
+                            android:gravity="center_horizontal"
+                    android:layout_below="@+id/theme">
+                <Button android:layout_width="60dp" android:layout_height="60dp"
+                        android:id="@+id/recent1"
+                        android:gravity="center_horizontal"
+                        android:background="@android:color/transparent"/>
+                <Button android:layout_width="60dp" android:layout_height="60dp"
+                        android:id="@+id/recent2"
+                        android:layout_toRightOf="@id/recent1"
+                        android:background="@android:color/transparent"/>
+                <Button android:layout_width="60dp" android:layout_height="60dp"
+                        android:layout_toRightOf="@id/recent2"
+                        android:id="@+id/recent3"
+                        android:background="@android:color/transparent"/>
+                <Button android:layout_width="60dp" android:layout_height="60dp"
+                        android:id="@+id/recent4"
+                        android:layout_toRightOf="@id/recent3"
+                        android:background="@android:color/transparent"/>
+            </RelativeLayout>
+        </RelativeLayout>
+    </ScrollView>
+
+</LinearLayout>
