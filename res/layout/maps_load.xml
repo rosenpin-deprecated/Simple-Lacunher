@@ -9,6 +9,7 @@
             style="?android:attr/progressBarStyleLarge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:indeterminateDrawable="@drawable/custom_prograss_dialog"
             android:id="@+id/progressBar" android:layout_gravity="center_horizontal"
             android:layout_centerVertical="true" android:layout_centerHorizontal="true"/>
 </RelativeLayout>

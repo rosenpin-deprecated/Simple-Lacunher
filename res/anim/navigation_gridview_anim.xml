@@ -3,4 +3,4 @@
     android:animation="@anim/gridview_animation"
     android:animationOrder="normal"
     android:repeatCount="infinite"
-    android:delay="0.8" />
+    android:delay="0.5" />

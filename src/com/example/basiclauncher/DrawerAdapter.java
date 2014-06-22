@@ -1,13 +1,16 @@
 package com.example.basiclauncher;
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
+import android.os.IBinder;
+import android.service.notification.NotificationListenerService;
+import android.service.notification.StatusBarNotification;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.GridView;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.*;
 
 public class DrawerAdapter extends BaseAdapter{
 	Context mContext;
@@ -52,7 +55,6 @@ public class DrawerAdapter extends BaseAdapter{
 			viewHolder = new ViewHolder();
 			viewHolder.text= (TextView)convertView.findViewById(R.id.icon_text);
 			viewHolder.icon= (ImageView)convertView.findViewById(R.id.icon_image);
-			
 			convertView.setTag(viewHolder);
 		}
 		else
@@ -60,8 +62,8 @@ public class DrawerAdapter extends BaseAdapter{
 		
 		viewHolder.text.setText(pacsForAdapter[pos].label);
 		viewHolder.icon.setImageDrawable(pacsForAdapter[pos].icon);
-
 		return convertView;
 	}
 
 }
+

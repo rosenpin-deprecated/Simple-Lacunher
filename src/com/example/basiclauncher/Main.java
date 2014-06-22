@@ -4,16 +4,22 @@ import android.app.*;
 import android.bluetooth.BluetoothAdapter;
 import android.content.*;
 import android.content.pm.*;
+import android.content.res.Resources;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.hardware.Camera;
 import android.location.Location;
 import android.location.LocationManager;
 import android.media.AudioManager;
+import android.media.Image;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
+import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -66,24 +72,29 @@ public class Main extends Activity {
     PackageManager pm;
     boolean save;
     ViewPager myPager;
-    Button app_drawer,mic,refresh,short_one,short_two,short_three,short_four,short_five,short_six,short_seven,short_eight;
+    Button app_drawer,refresh,short_one,short_two,short_three,short_four,short_five,short_six,short_seven,short_eight;
     AudioManager am;
     Timer myTimer;
+    ImageView brightness_image,volume_image;
     ImageView wifi,mobile_data,gps,rotate,airplane,bluetooth,flash,battery_saver;
     String packagename;
     String packagename_1,packagename_2,packagename_3,packagename_4,packagename_5,packagename_6,packagename_7,packagename_8,open_app;
     SharedPreferences sharedPreferences;
     PackageManager pack;
     SharedPreferences.Editor edit;
+    CheckBox enable_eventer,enable_animation;
     SeekBar brightness_sb,volume;
     ScrollView left;
     Button recent1,recent2,recent3,recent4;
     View view;
+    boolean wallpaper_set;
+    boolean initialized = false;
     public static String most;
     public static ArrayList<String> list = new ArrayList<String>();
     public static ArrayList<Integer> list_int  = new ArrayList<Integer>();
-
     public static PackageManager packageManager;
+    public static Context context;
+    public static boolean enable_event = false;
     public static List<ApplicationInfo> getAllInstalledApplications(Context context) {
         int i;
         List<ApplicationInfo> installedApps = context.getPackageManager().getInstalledApplications(PackageManager.PERMISSION_GRANTED);
@@ -159,6 +170,26 @@ public class Main extends Activity {
                             short_one.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
+                                    Main.most = packagename;
+                                    try {
+                                        if (!Main.list.contains(packagename)) {
+                                            Main.list.add(0, Main.most);
+                                            Main.list_int.add(0, Main.list.size());
+                                            System.out.println("most used is " + Main.list + String.valueOf(Main.list_int));
+                                        }
+                                        else{
+                                            Main.list.remove(packagename);
+                                            Main.list.add(0, Main.most);
+                                            Main.list_int.add(0, Main.list.size());
+                                            System.out.println("most used is " + Main.list + String.valueOf(Main.list_int));
+                                        }
+                                    }
+                                    catch (NullPointerException e){
+                                        e.printStackTrace();
+                                    }
+                                    catch (IndexOutOfBoundsException e){
+                                        e.printStackTrace();
+                                    }
                                     Intent LaunchIntent = getPackageManager().getLaunchIntentForPackage(packagename);
                                     startActivity(LaunchIntent);
                                 }
@@ -178,12 +209,34 @@ public class Main extends Activity {
                             short_two.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
+                                    Main.most = packagename;
+                                    try {
+                                        if (!Main.list.contains(packagename)) {
+                                            Main.list.add(1, Main.most);
+                                            Main.list_int.add(1, Main.list.size());
+                                            System.out.println("most used is " + Main.list + String.valueOf(Main.list_int));
+                                        }
+                                        else{
+                                            Main.list.remove(packagename);
+                                            Main.list.add(1, Main.most);
+                                            Main.list_int.add(1, Main.list.size());
+                                            System.out.println("most used is " + Main.list + String.valueOf(Main.list_int));
+                                        }
+                                    }
+                                    catch (NullPointerException e){
+                                        e.printStackTrace();
+                                    }
+                                    catch (IndexOutOfBoundsException e){
+                                        e.printStackTrace();
+                                    }
                                     Intent LaunchIntent = getPackageManager().getLaunchIntentForPackage(packagename);
                                     startActivity(LaunchIntent);
                                 }
                             });
                         } catch (PackageManager.NameNotFoundException e) {
                             e.printStackTrace();
+                            Toast.makeText(getApplicationContext(),"failed",100).show();
+
                         }
                         break;
                     case 3:
@@ -323,7 +376,6 @@ public class Main extends Activity {
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         edit = sharedPreferences.edit();
     }
 
@@ -331,10 +383,10 @@ public class Main extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
+        context = this;
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         edit = sharedPreferences.edit();
         pack = getPackageManager();
-        startService(new Intent(getApplicationContext(),Notification.class));
         displayNotificationOne();
         CustomPageAdapter adapter = new CustomPageAdapter();
         myPager = (ViewPager) findViewById(R.id.customviewpager);
@@ -349,6 +401,12 @@ public class Main extends Activity {
                        homeView = (RelativeLayout) findViewById(R.id.home_view);
                        onactivityswiper activitySwipeDetector = new onactivityswiper(Main.this);
                        homeView.setOnTouchListener(activitySwipeDetector);
+                       if (!light){
+                           homeView.setBackgroundColor(Color.parseColor("#80000000"));
+                       }
+                       else {
+                           homeView.setBackgroundColor(Color.parseColor("#80FFFFFF"));
+                       }
                    }
             }
 
@@ -379,7 +437,12 @@ public class Main extends Activity {
                         homeView = (RelativeLayout) findViewById(R.id.home_view);
                         onactivityswiper activitySwipeDetector = new onactivityswiper(Main.this);
                         homeView.setOnTouchListener(activitySwipeDetector);
-
+                        if (!light){
+                            homeView.setBackgroundColor(Color.parseColor("#80000000"));
+                        }
+                        else {
+                            homeView.setBackgroundColor(Color.parseColor("#80FFFFFF"));
+                        }
                         break;
                     case 2:
 
@@ -401,8 +464,10 @@ public class Main extends Activity {
                         registerReceiver(new PacReceiver(), filter);
                         break;
                     case 3:
-                        startActivity(new Intent(getApplicationContext(),map.class));
-                        overridePendingTransition(R.anim.left_right,R.anim.right_left);
+                        if (enable_event) {
+                            startActivity(new Intent(getApplicationContext(), map.class));
+                            overridePendingTransition(R.anim.left_right, R.anim.right_left);
+                        }
                    }
             }
 
@@ -425,10 +490,34 @@ public class Main extends Activity {
         if (sharedPreferences.contains("light")) {
             light = sharedPreferences.getBoolean("light", true);
         }
-
-
+        if(sharedPreferences.contains("initialized")) {
+            initialized = sharedPreferences.getBoolean("initialized", true);
+        }
+        if (!initialized){
+            startActivity(new Intent(getApplicationContext(),welcome_screen.class));
+            finish();
+        }
+        if(sharedPreferences.contains("wallpaper")){
+            wallpaper_set = sharedPreferences.getBoolean("wallpaper",true);
+        }
+        if(sharedPreferences.contains("event")){
+            enable_event = sharedPreferences.getBoolean("event",true);
+        }
         packageManager = getPackageManager();
+        if (!wallpaper_set){
+            Bitmap myBit = BitmapFactory.decodeResource(getResources(), R.drawable.wallpaper);
+            WallpaperManager wallpaperManager =
+                    WallpaperManager.getInstance(getApplicationContext());
+            try {
+                wallpaperManager.setBitmap(myBit);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            wallpaper_set = true;
+            edit.putBoolean("wallpaper",wallpaper_set).commit();
+        }
 // Turn off LED
+
 
     }
 
@@ -490,32 +579,11 @@ public class Main extends Activity {
             @Override
             public void onClick(View v) {
                 finish();
-                startActivity(new Intent(getApplicationContext(),Main.class));
+                startActivity(new Intent(getApplicationContext(), Main.class));
             }
         });
         init_time();
         init_buttons_main();
-        mic = (Button)findViewById(R.id.mic);
-        mic.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(
-                        RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-
-                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, "en-US");
-                intent.putExtra(RecognizerIntent.EXTRA_PROMPT,"Say the app name you would like to open");
-
-                try {
-                    startActivityForResult(intent, RESULT_SPEECH);
-
-                } catch (ActivityNotFoundException a) {
-                    Toast t = Toast.makeText(getApplicationContext(),
-                            "Opps! Your device doesn't support Speech to Text",
-                            Toast.LENGTH_SHORT);
-                    t.show();
-                }
-            }
-            });
 
 
 
@@ -526,9 +594,29 @@ public class Main extends Activity {
                 short_one.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        Main.most = packagename_1;
+                        try {
+                            if (!Main.list.contains(Main.most)) {
+                                Main.list.add(0, Main.most);
+                                Main.list_int.add(0, Main.list.size());
+                                System.out.println("most used is " + Main.list + String.valueOf(Main.list_int));
+                            }
+                            else{
+                                Main.list.remove(Main.most);
+                                Main.list.add(0, Main.most);
+                                Main.list_int.add(0, Main.list.size());
+                                System.out.println("most used is " + Main.list + String.valueOf(Main.list_int));
+                            }
+                        }
+                        catch (NullPointerException e){
+                            e.printStackTrace();
+                        }
+                        catch (IndexOutOfBoundsException e){
+                            e.printStackTrace();
+                        }
                         Intent LaunchIntent = getPackageManager().getLaunchIntentForPackage(packagename_1);
                         startActivity(LaunchIntent);
-                        overridePendingTransition(R.anim.left_right,R.anim.right_left);
+                        overridePendingTransition(R.anim.left_right, R.anim.right_left);
 
                     }
                 });
@@ -554,16 +642,33 @@ public class Main extends Activity {
                 });
             }
             if (sharedPreferences.contains("packagename_2")) {
-                packagename_2 = sharedPreferences.getString("packagename_2", "");
+                packagename_2 = sharedPreferences.getString("packagename_2","");
                 short_two.setBackground(pack.getApplicationIcon(packagename_2));
                 short_two.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent LaunchIntent = getPackageManager().getLaunchIntentForPackage(packagename_2);
-                        startActivity(LaunchIntent);
-                        overridePendingTransition(R.anim.open_app_animation,R.anim.open_app_animation);
-                    }
-                });
+                                                 @Override
+                                                 public void onClick(View v) {
+                                                     Main.most = packagename_2;
+                                                     try {
+                                                         if (!Main.list.contains(Main.most)) {
+                                                             Main.list.add(1, Main.most);
+                                                             Main.list_int.add(1, Main.list.size());
+                                                             System.out.println("most used is " + Main.list + String.valueOf(Main.list_int));
+                                                         } else {
+                                                             Main.list.remove(Main.most);
+                                                             Main.list.add(1, Main.most);
+                                                             Main.list_int.add(1, Main.list.size());
+                                                             System.out.println("most used is " + Main.list + String.valueOf(Main.list_int));
+                                                         }
+                                                     } catch (NullPointerException e) {
+                                                         e.printStackTrace();
+                                                     } catch (IndexOutOfBoundsException e) {
+                                                         e.printStackTrace();
+                                                     }
+                                                     Intent LaunchIntent = getPackageManager().getLaunchIntentForPackage(packagename_2);
+                                                     startActivity(LaunchIntent);
+                                                     overridePendingTransition(R.anim.left_right, R.anim.right_left);
+                                                 }
+                                             });
                 short_two.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View v) {
@@ -576,10 +681,10 @@ public class Main extends Activity {
                                 edit.remove("packagename_2");
                                 edit.commit();
                                 finish();
-                                startActivity(new Intent(getApplicationContext(),Main.class));
+                                startActivity(new Intent(getApplicationContext(), Main.class));
                             }
                         });
-                        alert_delete.setNegativeButton("Nevermind..",null);
+                        alert_delete.setNegativeButton("Nevermind..", null);
                         alert_delete.show();
                         return false;
                     }
@@ -587,14 +692,31 @@ public class Main extends Activity {
 
             }
             if (sharedPreferences.contains("packagename_3")) {
-                packagename_3 = sharedPreferences.getString("packagename_3", "");
+                packagename_3 = sharedPreferences.getString("packagename_3","");
                 short_three.setBackground(pack.getApplicationIcon(packagename_3));
                 short_three.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent LaunchIntent = getPackageManager().getLaunchIntentForPackage(packagename_3);
-                        startActivity(LaunchIntent);
-                        overridePendingTransition(R.anim.open_app_animation,R.anim.open_app_animation);
+                Main.most = packagename_2;
+                try {
+                    if (!Main.list.contains(Main.most)) {
+                        Main.list.add(2, Main.most);
+                        Main.list_int.add(2, Main.list.size());
+                        System.out.println("most used is " + Main.list + String.valueOf(Main.list_int));
+                    } else {
+                        Main.list.remove(Main.most);
+                        Main.list.add(2, Main.most);
+                        Main.list_int.add(2, Main.list.size());
+                        System.out.println("most used is " + Main.list + String.valueOf(Main.list_int));
+                    }
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                } catch (IndexOutOfBoundsException e) {
+                    e.printStackTrace();
+                }
+                Intent LaunchIntent = getPackageManager().getLaunchIntentForPackage(packagename_3);
+                startActivity(LaunchIntent);
+                overridePendingTransition(R.anim.left_right, R.anim.right_left);
                     }
                 });
                 short_three.setOnLongClickListener(new View.OnLongClickListener() {
@@ -619,14 +741,31 @@ public class Main extends Activity {
                 });
             }
             if (sharedPreferences.contains("packagename_4")) {
-                packagename_4 = sharedPreferences.getString("packagename_4", "");
+                packagename_4 = sharedPreferences.getString("packagename_4","");
                 short_four.setBackground(pack.getApplicationIcon(packagename_4));
                 short_four.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent LaunchIntent = getPackageManager().getLaunchIntentForPackage(packagename_4);
-                        startActivity(LaunchIntent);
-                        overridePendingTransition(R.anim.open_app_animation,R.anim.open_app_animation);
+                Main.most = packagename_4;
+                try {
+                    if (!Main.list.contains(Main.most)) {
+                        Main.list.add(3, Main.most);
+                        Main.list_int.add(3, Main.list.size());
+                        System.out.println("most used is " + Main.list + String.valueOf(Main.list_int));
+                    } else {
+                        Main.list.remove(Main.most);
+                        Main.list.add(3, Main.most);
+                        Main.list_int.add(3, Main.list.size());
+                        System.out.println("most used is " + Main.list + String.valueOf(Main.list_int));
+                    }
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                } catch (IndexOutOfBoundsException e) {
+                    e.printStackTrace();
+                }
+                Intent LaunchIntent = getPackageManager().getLaunchIntentForPackage(packagename_4);
+                startActivity(LaunchIntent);
+                overridePendingTransition(R.anim.left_right, R.anim.right_left);
                     }
                 });
                 short_four.setOnLongClickListener(new View.OnLongClickListener() {
@@ -656,29 +795,26 @@ public class Main extends Activity {
                 short_five.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        Main.most = packagename_5;
+                        try {
+                            if (!Main.list.contains(Main.most)) {
+                                Main.list.add(4, Main.most);
+                                Main.list_int.add(4, Main.list.size());
+                                System.out.println("most used is " + Main.list + String.valueOf(Main.list_int));
+                            } else {
+                                Main.list.remove(Main.most);
+                                Main.list.add(4, Main.most);
+                                Main.list_int.add(4, Main.list.size());
+                                System.out.println("most used is " + Main.list + String.valueOf(Main.list_int));
+                            }
+                        } catch (NullPointerException e) {
+                            e.printStackTrace();
+                        } catch (IndexOutOfBoundsException e) {
+                            e.printStackTrace();
+                        }
                         Intent LaunchIntent = getPackageManager().getLaunchIntentForPackage(packagename_5);
                         startActivity(LaunchIntent);
-                        overridePendingTransition(R.anim.open_app_animation,R.anim.open_app_animation);
-                    }
-                });
-                short_five.setOnLongClickListener(new View.OnLongClickListener() {
-                    @Override
-                    public boolean onLongClick(View v) {
-                        AlertDialog.Builder alert_delete = new AlertDialog.Builder(Main.this);
-                        alert_delete.setTitle("Remove from favorites");
-                        alert_delete.setMessage("Do you want to remove this app from your favorites?");
-                        alert_delete.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                edit.remove("packagename_5");
-                                edit.commit();
-                                finish();
-                                startActivity(new Intent(getApplicationContext(), Main.class));
-                            }
-                        });
-                        alert_delete.setNegativeButton("Nevermind..", null);
-                        alert_delete.show();
-                        return false;
+                        overridePendingTransition(R.anim.left_right, R.anim.right_left);
                     }
                 });
             }
@@ -688,9 +824,26 @@ public class Main extends Activity {
                 short_six.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        Main.most = packagename_6;
+                        try {
+                            if (!Main.list.contains(Main.most)) {
+                                Main.list.add(5, Main.most);
+                                Main.list_int.add(5, Main.list.size());
+                                System.out.println("most used is " + Main.list + String.valueOf(Main.list_int));
+                            } else {
+                                Main.list.remove(Main.most);
+                                Main.list.add(5, Main.most);
+                                Main.list_int.add(5, Main.list.size());
+                                System.out.println("most used is " + Main.list + String.valueOf(Main.list_int));
+                            }
+                        } catch (NullPointerException e) {
+                            e.printStackTrace();
+                        } catch (IndexOutOfBoundsException e) {
+                            e.printStackTrace();
+                        }
                         Intent LaunchIntent = getPackageManager().getLaunchIntentForPackage(packagename_6);
                         startActivity(LaunchIntent);
-                        overridePendingTransition(R.anim.open_app_animation,R.anim.open_app_animation);
+                        overridePendingTransition(R.anim.left_right, R.anim.right_left);
                     }
                 });
                 short_six.setOnLongClickListener(new View.OnLongClickListener() {
@@ -720,9 +873,26 @@ public class Main extends Activity {
                 short_seven.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        Main.most = packagename_7;
+                        try {
+                            if (!Main.list.contains(Main.most)) {
+                                Main.list.add(7, Main.most);
+                                Main.list_int.add(7, Main.list.size());
+                                System.out.println("most used is " + Main.list + String.valueOf(Main.list_int));
+                            } else {
+                                Main.list.remove(Main.most);
+                                Main.list.add(7, Main.most);
+                                Main.list_int.add(7, Main.list.size());
+                                System.out.println("most used is " + Main.list + String.valueOf(Main.list_int));
+                            }
+                        } catch (NullPointerException e) {
+                            e.printStackTrace();
+                        } catch (IndexOutOfBoundsException e) {
+                            e.printStackTrace();
+                        }
                         Intent LaunchIntent = getPackageManager().getLaunchIntentForPackage(packagename_7);
                         startActivity(LaunchIntent);
-                        overridePendingTransition(R.anim.open_app_animation,R.anim.open_app_animation);
+                        overridePendingTransition(R.anim.left_right, R.anim.right_left);
                     }
                 });
                 short_seven.setOnLongClickListener(new View.OnLongClickListener() {
@@ -752,9 +922,26 @@ public class Main extends Activity {
                 short_eight.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        Main.most = packagename_8;
+                        try {
+                            if (!Main.list.contains(Main.most)) {
+                                Main.list.add(7, Main.most);
+                                Main.list_int.add(7, Main.list.size());
+                                System.out.println("most used is " + Main.list + String.valueOf(Main.list_int));
+                            } else {
+                                Main.list.remove(Main.most);
+                                Main.list.add(7, Main.most);
+                                Main.list_int.add(7, Main.list.size());
+                                System.out.println("most used is " + Main.list + String.valueOf(Main.list_int));
+                            }
+                        } catch (NullPointerException e) {
+                            e.printStackTrace();
+                        } catch (IndexOutOfBoundsException e) {
+                            e.printStackTrace();
+                        }
                         Intent LaunchIntent = getPackageManager().getLaunchIntentForPackage(packagename_8);
                         startActivity(LaunchIntent);
-                        overridePendingTransition(R.anim.open_app_animation,R.anim.open_app_animation);
+                        overridePendingTransition(R.anim.left_right, R.anim.right_left);
                     }
                 });
                 short_eight.setOnLongClickListener(new View.OnLongClickListener() {
@@ -783,6 +970,7 @@ public class Main extends Activity {
         catch (PackageManager.NameNotFoundException e){
             e.printStackTrace();
         }
+
     }
     private void TimerMethod()
     {
@@ -840,6 +1028,21 @@ public class Main extends Activity {
 
     }
     void init_time(){
+
+        Intent batteryIntent = registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+        int level = batteryIntent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+        int plugged = batteryIntent.getIntExtra(BatteryManager.EXTRA_PLUGGED, 0);
+        float temperature = batteryIntent.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, 0) / 10;
+        TextView battery_text = (TextView)findViewById(R.id.battery);
+        battery_text.setText(level+"%"+"\n"+temperature+"°C");
+        switch (plugged){
+            case 1:
+                battery_text.setTextColor(getResources().getColor(android.R.color.holo_green_light));
+                break;
+            case 0:
+                battery_text.setTextColor(getResources().getColor(android.R.color.white));
+                break;
+        }
         Calendar c = Calendar.getInstance();
         int hour = c.get(Calendar.HOUR_OF_DAY);
         String minute = String .valueOf(c.get(Calendar.MINUTE));
@@ -876,6 +1079,11 @@ public class Main extends Activity {
         TextView date = (TextView)findViewById(R.id.date);
         date.setText(day);
         time.setText(String.valueOf(hour) + ":" + String.valueOf(minute));
+        if(light) {
+              time.setTextColor(getResources().getColor(android.R.color.black));
+              date.setTextColor(getResources().getColor(android.R.color.black));
+              battery_text.setTextColor(getResources().getColor(android.R.color.black));
+        }
     }
 
     void dark(){
@@ -886,6 +1094,27 @@ public class Main extends Activity {
         settings_back.setBackgroundColor(Color.parseColor("#80FFFFFF"));
     }
     void init(){
+        enable_eventer = (CheckBox)findViewById(R.id.enable_eventer);
+        if(enable_event){
+            enable_eventer.setChecked(true);
+        }
+
+            enable_eventer.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    enable_event = true;
+                    edit.putBoolean("event",true);
+                }
+                else {
+                    enable_event = false;
+                    edit.putBoolean("event",false);
+                }
+                edit.commit();
+            }
+        });
+        brightness_image = (ImageView)findViewById(R.id.brightness_image);
+        volume_image = (ImageView)findViewById(R.id.volume_image);
         recent1 = (Button)findViewById(R.id.recent1);
         recent2 = (Button)findViewById(R.id.recent2);
         recent3 = (Button)findViewById(R.id.recent3);
@@ -1007,6 +1236,10 @@ public class Main extends Activity {
             @Override
             public void onClick(View v) {
                 if (!save) {
+                    ContentResolver cResolver;
+                    cResolver = getContentResolver();
+                    Settings.System.putInt(cResolver,
+                            Settings.System.SCREEN_BRIGHTNESS_MODE, Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL);
                     battery_saver.setImageResource(R.drawable.save_battery_enabled);
                     try {
                         setMobileDataEnabled(getApplicationContext(), false);
@@ -1079,8 +1312,10 @@ public class Main extends Activity {
             }
 
         });
+
     }
     void inittwo(){
+
         try {
             recent1.setBackground(getPackageManager().getApplicationIcon(Main.list.get(0)));
             recent2.setBackground(getPackageManager().getApplicationIcon(Main.list.get(1)));
@@ -1094,6 +1329,25 @@ public class Main extends Activity {
             e.printStackTrace();
         }
         final ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        recent1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                try {
+                    recent1.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_down));
+                    boolean x = false;
+                    while (!x) {
+                        if (recent1.getAnimation() != null) {
+                            x = true;
+                            Intent LaunchIntent = getPackageManager().getLaunchIntentForPackage(Main.list.get(0));
+                            startActivity(LaunchIntent);
+                        }
+                    }
+                }catch (IndexOutOfBoundsException e){
+                    e.printStackTrace();
+                }
+            }
+            });
         recent1.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -1144,9 +1398,16 @@ public class Main extends Activity {
                     recent3.setAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_down));
                     Toast.makeText(getApplicationContext(), "pressed", 100).show();
                     list.remove(2);
-                    recent3.setBackgroundColor(getResources().getColor(android.R.color.transparent));
-                    recent4.setBackgroundColor(getResources().getColor(android.R.color.transparent));
-                } catch (IndexOutOfBoundsException e) {
+                    boolean x = false;
+                    while (!x) {
+                        if (recent2.getAnimation() != null) {
+                            x = true;
+                            recent2.setVisibility(100);
+                            recent3.setVisibility(100);
+                            recent4.setVisibility(100);
+
+                        }
+                    } } catch (IndexOutOfBoundsException e) {
                     e.printStackTrace();
                 }
                 return false;
@@ -1203,6 +1464,7 @@ public class Main extends Activity {
                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                     am.setStreamVolume(AudioManager.STREAM_RING, progress, AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
 
+
                 }
 
                 @Override
@@ -1223,6 +1485,12 @@ public class Main extends Activity {
                     android.provider.Settings.System.putInt(getContentResolver(),
                             android.provider.Settings.System.SCREEN_BRIGHTNESS, progress * 3);
                     curBrightnessValue = progress;
+                    ContentResolver cResolver;
+                    cResolver = getContentResolver();
+                    Settings.System.putInt(cResolver,
+                            Settings.System.SCREEN_BRIGHTNESS_MODE, Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL);
+
+
                 }
 
                 @Override
@@ -1254,6 +1522,20 @@ public class Main extends Activity {
                 else {
                     bluetooth.setImageResource(R.drawable.ic_action_bluetooth_inverted);
                 }
+            }
+            if(light){
+                brightness_image.setImageResource(R.drawable.ic_action_brightness_high);
+            }
+            else{
+                brightness_image.setImageResource(R.drawable.ic_action_brightness_high_inverted);
+            }
+            if(light){
+                brightness_image.setImageResource(R.drawable.ic_action_brightness_high);
+                volume_image.setImageResource(R.drawable.ic_action_volume_on);
+            }
+            else{
+                brightness_image.setImageResource(R.drawable.ic_action_brightness_high_inverted);
+                volume_image.setImageResource(R.drawable.ic_action_volume_on_inverted);
             }
             WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
             if (wifiManager.isWifiEnabled()) {
@@ -1294,6 +1576,7 @@ public class Main extends Activity {
                     airplane.setImageResource(R.drawable.ic_action_airplane_mode_inverted);
                 }                 }
             LocationManager mlocManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+
             if(save){
                 battery_saver.setImageResource(R.drawable.save_battery_enabled);
             }
@@ -1450,12 +1733,27 @@ public class Main extends Activity {
 
         public void onTopToBottomSwipe() {
             Log.i(logTag, "onTopToBottomSwipe!");
-            Intent LaunchIntent = getPackageManager().getLaunchIntentForPackage("com.google.android.googlequicksearchbox");
-            startActivity(LaunchIntent);
+            startActivity(new Intent(getApplicationContext(), dialog.class));
+
         }
 
         public void onBottomToTopSwipe() {
             Log.i(logTag, "onBottomToTopSwipe!");
+            Intent intent = new Intent(
+                    RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+
+            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, "en-US");
+            intent.putExtra(RecognizerIntent.EXTRA_PROMPT,"Say the app name you would like to open");
+
+            try {
+                startActivityForResult(intent, RESULT_SPEECH);
+
+            } catch (ActivityNotFoundException a) {
+                Toast t = Toast.makeText(getApplicationContext(),
+                        "Opps! Your device doesn't support Speech to Text",
+                        Toast.LENGTH_SHORT);
+                t.show();
+            }
         }
 
         public boolean onTouch(View v, MotionEvent event) {

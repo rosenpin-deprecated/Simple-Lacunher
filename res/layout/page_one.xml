@@ -12,6 +12,21 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
+            <CheckBox android:layout_width="fill_parent" android:layout_height="60dp"
+                    android:layout_below="@+id/recent_containers"
+                    android:id="@+id/enable_eventer"
+
+                    android:text="Enable Eventer"/>
+            <CheckBox android:layout_width="fill_parent" android:layout_height="60dp"
+                      android:text="Enable Animations"
+                      android:enabled="false"
+                      android:id="@+id/enable_animation"
+                    android:layout_below="@+id/enable_eventer"/>
+            <CheckBox android:layout_width="fill_parent" android:layout_height="60dp"
+                    android:layout_below="@id/enable_animation"
+                    android:id="@+id/smart_learn"
+                    android:text="Smart Learn"
+                    android:enabled="false"/>
             <RelativeLayout android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center_horizontal"
@@ -81,30 +96,37 @@
             </RelativeLayout>
 
             <SeekBar
+                    android:thumb="@drawable/circle"
+                    android:progressDrawable="@drawable/gardient"
                     android:layout_marginTop="200dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/brightness_slider"
                     android:layout_alignParentRight="true"
-                    android:layout_alignParentEnd="true" android:layout_toRightOf="@+id/imageView" android:max="85"/>
+                    android:layout_alignParentEnd="true"
+                    android:layout_toRightOf="@+id/brightness_image" android:max="85"/>
             <ImageView
+
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/imageView"
+                    android:id="@+id/brightness_image"
                     android:background="@drawable/ic_action_brightness_high"
                     android:layout_alignTop="@+id/brightness_slider" android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"/>
             <SeekBar
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+
+                    android:progressDrawable="@drawable/gardient_2"
+                    android:thumb="@drawable/circle"
                     android:id="@+id/volume_slider" android:layout_alignParentTop="true"
                     android:layout_marginTop="268dp" android:layout_alignParentRight="true"
-                    android:layout_alignParentEnd="true" android:layout_toRightOf="@+id/imageView2"
+                    android:layout_alignParentEnd="true" android:layout_toRightOf="@+id/volume_image"
                     android:indeterminateOnly="false" android:max="7"/>
             <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/imageView2"
+                    android:id="@+id/volume_image"
                     android:background="@drawable/ic_action_volume_on"
                     android:layout_alignTop="@+id/volume_slider" android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"/>

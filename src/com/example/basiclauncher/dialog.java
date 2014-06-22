@@ -1,7 +1,10 @@
 package com.example.basiclauncher;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.view.View;
 import android.widget.Button;
 
 /**
@@ -14,5 +17,12 @@ public class dialog extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialog);
         wallpaper_but = (Button)findViewById(R.id.wallpaper);
+        wallpaper_but.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Settings.ACTION_DISPLAY_SETTINGS);
+                startActivity(intent);
+            }
+        });
     }
 }

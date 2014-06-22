@@ -1,5 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.DrawerLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/drawer_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <!-- As the main content view, the view below consumes the entire
+         space available using match_parent in both dimensions. -->
+    <FrameLayout
+            android:id="@+id/content_frame"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
              xmlns:map="http://schemas.android.com/apk/res-auto"
              map:mapType="normal"
              android:layout_width="match_parent"
@@ -12,3 +25,16 @@
               android:layout_height="match_parent"
               android:name="com.example.basiclauncher.Main" />
 </FrameLayout>
+    <ScrollView android:layout_width="fill_parent" android:layout_height="fill_parent"
+                android:layout_gravity="end"
+            >
+<RelativeLayout android:layout_width="fill_parent" android:layout_height="fill_parent"
+        android:background="@android:color/white">
+    <Button android:layout_width="fill_parent" android:layout_height="100dp"
+            android:id="@+id/buttonnnnn"
+            android:text="Board View"/>
+
+
+</RelativeLayout>
+    </ScrollView>
+</android.support.v4.widget.DrawerLayout>
